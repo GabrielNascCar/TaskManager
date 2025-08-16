@@ -61,5 +61,15 @@ public class UserService {
                 .toList();
     }
 
+    public UserDTO updateUser(Long id, UserDTO userDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        user.setName(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+
+        return convertToDTO(userRepository.save(user));
+    }
+
 
 }
