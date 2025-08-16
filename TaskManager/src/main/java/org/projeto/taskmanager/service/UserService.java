@@ -39,7 +39,7 @@ public class UserService {
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email já está em uso.");
+            throw new IllegalArgumentException("Email already registered");
         }
 
         User user = convertToEntity(userDTO);
@@ -50,7 +50,7 @@ public class UserService {
 
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         return convertToDTO(user);
     }
 
@@ -63,12 +63,18 @@ public class UserService {
 
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
 
         return convertToDTO(userRepository.save(user));
+    }
+
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        userRepository.delete(user);
     }
 
 
