@@ -76,6 +76,14 @@ public class TaskService {
         return convertToDTO(updatedTask);
     }
 
+    @Transactional
+    public void deleteTask(Long id) {
+        if (!taskRepository.existsById(id)) {
+            throw new RuntimeException("Task not found");
+        }
+        taskRepository.deleteById(id);
+    }
+
     private Task convertToEntity(TaskDTO taskDTO) {
         Task task = new Task();
         task.setTitle(taskDTO.getTitle());
