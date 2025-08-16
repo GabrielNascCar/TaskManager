@@ -55,6 +55,12 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    public TaskDTO findTaskById(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        return convertToDTO(task);
+    }
+
     private Task convertToEntity(TaskDTO taskDTO) {
         Task task = new Task();
         task.setTitle(taskDTO.getTitle());
