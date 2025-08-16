@@ -45,4 +45,10 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    @GetMapping("/in_progress")
+    public ResponseEntity<List<TaskDTO>> getInProgressTasks() {
+        List<TaskDTO> tasks = taskService.findTasksByStatus(TaskStatus.IN_PROGRESS);
+        return ResponseEntity.ok(tasks);
+    }
+
 }
