@@ -1,6 +1,7 @@
 package org.projeto.taskmanager.controller;
 
 import jakarta.validation.Valid;
+import org.projeto.taskmanager.dto.TaskDTO;
 import org.projeto.taskmanager.dto.UserDTO;
 import org.projeto.taskmanager.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -49,6 +50,12 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{userId}/tasks")
+    public ResponseEntity<List<TaskDTO>> getUserTasks(@PathVariable Long userId) {
+        List<TaskDTO> tasks = userService.getUserTasks(userId);
+        return ResponseEntity.ok(tasks);
     }
 
 }
