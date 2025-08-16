@@ -3,6 +3,8 @@ package org.projeto.taskmanager.controller;
 import jakarta.validation.Valid;
 import org.projeto.taskmanager.dto.TaskDTO;
 import org.projeto.taskmanager.dto.UserDTO;
+import org.projeto.taskmanager.dto.UserPasswordUpdateDTO;
+import org.projeto.taskmanager.dto.UserUpdateDTO;
 import org.projeto.taskmanager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,12 +40,22 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<UserDTO> updateProfile(
             @PathVariable Long id,
-            @Valid @RequestBody UserDTO userDTO) {
-        UserDTO updatedUser = userService.updateUser(id, userDTO);
+            @Valid @RequestBody UserUpdateDTO dto
+    ) {
+        UserDTO updatedUser = userService.updateProfile(id, dto);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<Void> updatePassword(
+            @PathVariable Long id,
+            @Valid @RequestBody UserPasswordUpdateDTO dto
+    ) {
+        userService.updatePassword(id, dto.getNewPassword());
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")

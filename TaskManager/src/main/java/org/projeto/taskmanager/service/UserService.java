@@ -3,6 +3,7 @@ package org.projeto.taskmanager.service;
 import jakarta.transaction.Transactional;
 import org.projeto.taskmanager.dto.TaskDTO;
 import org.projeto.taskmanager.dto.UserDTO;
+import org.projeto.taskmanager.dto.UserUpdateDTO;
 import org.projeto.taskmanager.models.Task;
 import org.projeto.taskmanager.models.User;
 import org.projeto.taskmanager.repository.UserRepository;
@@ -82,14 +83,21 @@ public class UserService {
                 .toList();
     }
 
-    public UserDTO updateUser(Long id, UserDTO userDTO) {
+    public UserDTO updateProfile(Long id, UserUpdateDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
         return convertToDTO(userRepository.save(user));
+    }
+
+    public void updatePassword(Long id, String newPassword) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(newPassword);
+        userRepository.save(user);
     }
 
     public void deleteUser(Long id) {
