@@ -47,5 +47,11 @@ public class UserService {
         return convertToDTO(savedUser);
     }
 
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        return convertToDTO(user);
+    }
+
 
 }
