@@ -49,6 +49,12 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    public List<TaskDTO> findTasksByStatus(TaskStatus status) {
+        return taskRepository.findByStatus(status).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     private Task convertToEntity(TaskDTO taskDTO) {
         Task task = new Task();
         task.setTitle(taskDTO.getTitle());
