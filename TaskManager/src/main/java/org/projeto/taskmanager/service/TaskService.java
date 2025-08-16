@@ -10,6 +10,8 @@ import org.projeto.taskmanager.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -39,6 +41,12 @@ public class TaskService {
         Task savedTask = taskRepository.save(task);
 
         return convertToDTO(savedTask);
+    }
+
+    public List<TaskDTO> findAllTasks() {
+        return taskRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private Task convertToEntity(TaskDTO taskDTO) {
