@@ -36,6 +36,10 @@ public class Task {
     @Column(name = "due_date")
     private LocalDate dueDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Task(){}
     public Task(String title, String description, TaskStatus status, Priority priority, LocalDateTime createdAt, LocalDateTime completedAt, LocalDate dueDate) {
         this.title = title;
@@ -109,5 +113,13 @@ public class Task {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
