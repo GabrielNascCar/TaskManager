@@ -39,4 +39,10 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    @GetMapping("/completed")
+    public ResponseEntity<List<TaskDTO>> getCompletedTasks() {
+        List<TaskDTO> tasks = taskService.findTasksByStatus(TaskStatus.COMPLETED);
+        return ResponseEntity.ok(tasks);
+    }
+
 }
