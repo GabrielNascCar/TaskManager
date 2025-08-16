@@ -7,6 +7,7 @@ import org.projeto.taskmanager.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -51,6 +52,13 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         return convertToDTO(user);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
 
