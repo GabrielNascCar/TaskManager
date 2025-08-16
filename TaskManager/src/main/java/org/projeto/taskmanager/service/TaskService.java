@@ -61,6 +61,21 @@ public class TaskService {
         return convertToDTO(task);
     }
 
+    @Transactional
+    public TaskDTO updateTask(Long id, TaskDTO taskDTO) {
+        Task existingTask = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        existingTask.setTitle(taskDTO.getTitle());
+        existingTask.setDescription(taskDTO.getDescription());
+        existingTask.setPriority(taskDTO.getPriority());
+        existingTask.setStatus(taskDTO.getStatus());
+        existingTask.setDueDate(taskDTO.getDueDate());
+
+        Task updatedTask = taskRepository.save(existingTask);
+        return convertToDTO(updatedTask);
+    }
+
     private Task convertToEntity(TaskDTO taskDTO) {
         Task task = new Task();
         task.setTitle(taskDTO.getTitle());
