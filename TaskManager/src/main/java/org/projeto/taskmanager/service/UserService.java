@@ -3,7 +3,10 @@ package org.projeto.taskmanager.service;
 import jakarta.transaction.Transactional;
 import org.projeto.taskmanager.dto.TaskDTO;
 import org.projeto.taskmanager.dto.UserDTO;
+import org.projeto.taskmanager.dto.UserPasswordUpdateDTO;
 import org.projeto.taskmanager.dto.UserUpdateDTO;
+import org.projeto.taskmanager.exception.EmailAlreadyExistsException;
+import org.projeto.taskmanager.exception.ResourceNotFoundException;
 import org.projeto.taskmanager.models.Task;
 import org.projeto.taskmanager.models.User;
 import org.projeto.taskmanager.repository.UserRepository;
@@ -17,6 +20,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -61,7 +65,7 @@ public class UserService {
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new EmailAlreadyExistsException(userDTO.getEmail());
         }
 
         User user = convertToEntity(userDTO);
@@ -72,7 +76,7 @@ public class UserService {
 
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
         return convertToDTO(user);
     }
 
@@ -85,7 +89,7 @@ public class UserService {
 
     public UserDTO updateProfile(Long id, UserUpdateDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
 
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
@@ -94,7 +98,7 @@ public class UserService {
 
     public void updatePassword(Long id, String newPassword) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
 
         user.setPassword(newPassword);
         userRepository.save(user);
@@ -102,19 +106,17 @@ public class UserService {
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
         userRepository.delete(user);
     }
 
     public List<TaskDTO> getUserTasks(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
         return user.getTasks()
                 .stream()
                 .map(this::convertTaskToDTO)
                 .collect(Collectors.toList());
     }
-
-
 }
