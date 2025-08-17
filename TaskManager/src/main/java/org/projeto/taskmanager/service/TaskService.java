@@ -2,6 +2,8 @@ package org.projeto.taskmanager.service;
 
 import jakarta.transaction.Transactional;
 import org.projeto.taskmanager.dto.TaskDTO;
+import org.projeto.taskmanager.exception.TaskNotFoundException;
+import org.projeto.taskmanager.exception.TaskValidationException;
 import org.projeto.taskmanager.models.Task;
 import org.projeto.taskmanager.models.User;
 import org.projeto.taskmanager.models.enums.TaskStatus;
@@ -29,7 +31,7 @@ public class TaskService {
     public TaskDTO createTask(TaskDTO taskDTO) {
 
         if (taskDTO.getDueDate() != null && taskDTO.getDueDate().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Due date cannot be in the past");
+            throw new TaskValidationException("dueDate", "Cannot be in the past");
         }
 
         Task task = convertToEntity(taskDTO);
@@ -57,14 +59,14 @@ public class TaskService {
 
     public TaskDTO findTaskById(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException(id));
         return convertToDTO(task);
     }
 
     @Transactional
     public TaskDTO updateTask(Long id, TaskDTO taskDTO) {
         Task existingTask = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException(id));
 
         existingTask.setTitle(taskDTO.getTitle());
         existingTask.setDescription(taskDTO.getDescription());
@@ -79,7 +81,7 @@ public class TaskService {
     @Transactional
     public void deleteTask(Long id) {
         if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Task not found");
+            throw new TaskNotFoundException(id);
         }
         taskRepository.deleteById(id);
     }
@@ -92,7 +94,6 @@ public class TaskService {
         task.setPriority(taskDTO.getPriority());
         task.setDueDate(taskDTO.getDueDate());
 
-        // Busca o usuário associado
         User user = userRepository.findById(taskDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + taskDTO.getUserId()));
         task.setUser(user);
